@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LOVO</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LOVO">
+<style>
+:root{--bg:#fff8f1;--card:#fff;--tx:#1f1633;--mut:#6b6280;--p:#7c3aed;--p2:#ff4d8d;--bd:#eadff5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#140f22;--card:#1e1733;--tx:#f5f0ff;--mut:#a79fc0;--bd:#2f2650}}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column}
+main{flex:1;overflow-y:auto;padding:16px}
+.grad{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff}
+h1,h2,h3{margin:0 0 8px}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:12px 16px}
+.btn{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:700;width:100%}
+.btn.sec{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;margin:6px 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:14px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin:12px 0}.tabs button{flex:1;background:var(--card);color:var(--mut);border:1px solid var(--bd);padding:9px 4px;font-size:.85rem}
+.tabs button.on{background:var(--p);color:#fff;border-color:var(--p)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.art{background:var(--card);border:1px solid var(--bd);border-radius:18px;overflow:hidden}
+.pic{height:130px;display:grid;place-items:center;font-size:3.4rem;background:linear-gradient(135deg,var(--p),var(--p2))}
+.art .i{padding:10px}.art b{display:block}.pr{color:var(--p);font-weight:800}
+.art button{padding:8px;width:100%;margin-top:6px;font-size:.85rem}
+nav{display:flex;background:var(--card);border-top:1px solid var(--bd);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;background:none;color:var(--mut);font-size:.68rem;padding:6px 0;position:relative}
+nav button span{display:block;font-size:1.3rem}nav button.on{color:var(--p);font-weight:700}
+.badge{position:absolute;top:0;right:22%;background:var(--p2);color:#fff;border-radius:10px;font-size:.65rem;padding:1px 6px}
+#shorts{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;margin:-16px;background:#000}
+.sh{height:100%;scroll-snap-align:start;position:relative;display:grid;place-items:center;color:#fff;overflow:hidden}
+.sh video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sh .em{font-size:6rem;animation:fl 3s ease-in-out infinite}@keyframes fl{50%{transform:translateY(-14px) scale(1.08)}}
+.sh .tx{position:absolute;left:16px;right:70px;bottom:18px}.sh .tx b{font-size:1.2rem}
+.sh .ac{position:absolute;right:12px;bottom:30px;display:flex;flex-direction:column;gap:14px}
+.sh .ac button{background:rgba(255,255,255,.22);color:#fff;border-radius:50%;width:46px;height:46px;padding:0;font-size:1.2rem}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.q button{width:30px;height:30px;padding:0;border-radius:50%;background:var(--bd);color:var(--tx)}
+.pay{display:flex;gap:10px;align-items:center;border:2px solid var(--bd);border-radius:16px;padding:12px;margin-bottom:10px;cursor:pointer;background:var(--card)}
+.pay.on{border-color:var(--p)}.wv{background:#1dc8f2;color:#fff;font-weight:900;border-radius:10px;padding:6px 10px}
+.mut{color:var(--mut);font-size:.85rem}.num{font-size:1.5rem;font-weight:900;letter-spacing:1px;color:var(--p)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:20px;font-size:.9rem;z-index:99}
+.hero{border-radius:22px;padding:20px;margin-bottom:14px}
+.empty{text-align:center;padding:40px 16px}.empty div:first-child{font-size:3.4rem}
+.ck,.md{position:fixed;left:12px;right:12px;max-width:456px;margin:0 auto;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:14px;z-index:90;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.ck{bottom:80px}.md{top:20%}
+.del{background:#fee2e2;color:#b91c1c;padding:8px;font-size:.8rem}
+</style>
+</head>
+<body>
+<div id="app"><main id="main"></main><nav id="nav" hidden></nav></div>
+<script>
+const CFG={shop:"LOVO",wave:"0501483184",cur:"FCFA"};
+let S={user:null,owner:false,cart:{},orders:[],pay:"wave",tab:"art",arts:[],shorts:[],ck:null};
+try{const x=localStorage.getItem("lovo");if(x)S=Object.assign(S,JSON.parse(x))}catch(e){}
+const ARTS=S.arts,SHORTS=S.shorts;
+Object.keys(S.cart).forEach(id=>{if(!ARTS.find(a=>a.id==id))delete S.cart[id]});
+const save=()=>{try{localStorage.setItem("lovo",JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s),fmt=n=>n.toLocaleString("fr-FR")+" "+CFG.cur;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const cnt=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
+const tot=()=>Object.entries(S.cart).reduce((a,[id,q])=>a+ARTS.find(x=>x.id==id).p*q,0);
+function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),1800)}
+function img(f,cb){const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const c=document.createElement("canvas"),k=Math.min(1,420/i.width);c.width=i.width*k;c.height=i.height*k;c.getContext("2d").drawImage(i,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.7))};i.src=r.result};r.readAsDataURL(f)}
+// ===== COOKIES =====
+function cookies(){if(S.ck||S.owner)return;const d=document.createElement("div");d.className="ck";
+ d.innerHTML=`<b>🍪 Cookies</b><div class="mut">LOVO utilise des cookies pour garder votre session et votre panier, et améliorer votre expérience.</div><div class="row" style="margin-top:10px"><button class="btn sec" id="cn">Refuser</button><button class="btn" id="cy">Accepter</button></div>`;
+ document.body.appendChild(d);
+ const set=v=>{S.ck=v;save();try{if(v=="yes")document.cookie="lovo_consent=1; max-age=31536000; path=/; SameSite=Lax"}catch(e){}d.remove()};
+ $("#cn").onclick=()=>set("no");$("#cy").onclick=()=>set("yes")}
+// ===== INSTALLATION =====
+let dp=null;addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e});
+function inst(){if(dp){dp.prompt();return}
+ const d=document.createElement("div");d.className="md";
+ d.innerHTML=`<h3>📲 Installer LOVO</h3><p><b>Android (Chrome)</b> : menu ⋮ puis « Ajouter à l’écran d’accueil » ou « Installer l’application ».</p><p><b>iPhone (Safari)</b> : bouton Partager puis « Sur l’écran d’accueil ».</p><button class="btn" id="mx">Compris</button>`;
+ document.body.appendChild(d);$("#mx").onclick=()=>d.remove()}
+let mode="email";
+// ===== INSCRIPTION (clients) =====
+function auth(){
+ $("#nav").hidden=true;
+ $("#main").innerHTML=`<div class="hero grad"><h1>LOVO ✨</h1><div>Le style qui vous ressemble, livré chez vous.</div></div>
+ <h2>Créer mon compte</h2>
+ <div class="tabs"><button data-m="email" class="${mode=="email"?"on":""}">✉️ E-mail</button><button data-m="phone" class="${mode=="phone"?"on":""}">📱 Téléphone</button></div>
+ <input id="nm" placeholder="Votre nom">
+ ${mode=="email"?'<input id="id" type="email" placeholder="Adresse e-mail"><input id="pw" type="password" placeholder="Mot de passe">':'<input id="id" type="tel" placeholder="Numéro de téléphone"><input id="pw" placeholder="Code SMS reçu (démo : 1234)">'}
+ <button class="btn" id="go">Continuer</button>
+ <p class="mut" style="text-align:center">ou</p>
+ <button class="btn sec" id="gg"><b style="color:#4285f4">G</b> Continuer avec Google</button>
+ <button class="btn sec" id="in" style="margin-top:10px">📲 Installer l’application</button>`;
+ document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;auth()});
+ $("#in").onclick=inst;
+ $("#go").onclick=()=>{const id=$("#id").value.trim(),nm=$("#nm").value.trim()||"Client";
+  if(!id||!$("#pw").value)return toast("Remplissez tous les champs");
+  S.user={nm,id,via:mode};save();home()};
+ $("#gg").onclick=()=>{S.user={nm:"Client Google",id:"compte@gmail.com",via:"google"};save();home()};
+}
+function home(){
+ const O=S.owner;if(O&&!["art","sh","pro"].includes(S.tab))S.tab="art";
+ const T=O?[["art","🛍️","Articles"],["sh","🎬","Shorts"],["pro","👤","Profil"]]:[["art","🛍️","Articles"],["sh","🎬","Shorts"],["cart","🧺","Achats"],["pay","💳","Paiement"],["pro","👤","Profil"]];
+ $("#nav").hidden=false;
+ $("#nav").innerHTML=T.map(([k,i,l])=>`<button data-t="${k}" class="${S.tab==k?"on":""}"><span>${i}</span>${l}${k=="cart"&&cnt()?`<i class="badge">${cnt()}</i>`:""}</button>`).join("");
+ document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;save();home()});
+ ({art,sh,cart,pay,pro})[S.tab]();
+}
+function art(){
+ const O=S.owner;
+ $("#main").innerHTML=(O?`<div class="card"><h3>➕ Nouvel article</h3><input id="an" placeholder="Nom de l’article"><input id="ap" type="number" placeholder="Prix en FCFA"><input id="af" type="file" accept="image/*"><button class="btn" id="add">Publier l’article</button></div>`:`<div class="hero grad"><h2>Nouvelle collection 🔥</h2><div>Livraison rapide • Paiement Wave</div></div>`)
+ +(ARTS.length?`<div class="grid">${ARTS.map(a=>`<div class="art"><div class="pic" ${a.im?`style="background:url(${a.im}) center/cover"`:""}>${a.im?"":"👕"}</div><div class="i"><b>${esc(a.n)}</b>${O?`<input type="number" data-pi="${a.id}" value="${a.p}"><button class="del" data-x="${a.id}">Supprimer</button>`:`<span class="pr">${fmt(a.p)}</span><button class="btn" data-a="${a.id}">+ Ajouter</button>`}</div></div>`).join("")}</div>`:`<div class="empty"><div>🛍️</div><b>${O?"Aucun article publié":"Bientôt disponible"}</b><div class="mut">${O?"Ajoutez votre premier article ci-dessus.":"Les premiers articles arrivent très vite."}</div></div>`);
+ document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{S.cart[b.dataset.a]=(S.cart[b.dataset.a]||0)+1;save();toast("Ajouté au panier ✓");home()});
+ document.querySelectorAll("[data-pi]").forEach(i=>i.onchange=()=>{const a=ARTS.find(x=>x.id==i.dataset.pi);if(+i.value>0){a.p=+i.value;save();toast("Prix modifié ✓")}});
+ document.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{ARTS.splice(ARTS.findIndex(x=>x.id==b.dataset.x),1);save();art()});
+ if(O)$("#add").onclick=()=>{const n=$("#an").value.trim(),p=parseInt($("#ap").value),f=$("#af").files[0];if(!n||!(p>0))return toast("Nom et prix requis");
+  const go=im=>{ARTS.push({id:Date.now(),n,p,im});save();toast("Article publié ✓");art()};f?img(f,go):go(null)};
+}
+function sh(){
+ const O=S.owner;
+ if(O){$("#main").innerHTML=`<div class="card"><h3>🎬 Nouvelle vidéo publicitaire</h3><input id="st" placeholder="Titre"><input id="sd" placeholder="Description"><input id="ss" type="url" placeholder="Lien direct de la vidéo (.mp4)"><button class="btn" id="sa">Publier la vidéo</button></div>`
+  +(SHORTS.length?SHORTS.map(s=>`<div class="card row"><div><b>${esc(s.t)}</b><div class="mut">${esc(s.d||"")}</div></div><button class="del" data-x="${s.id}">Supprimer</button></div>`).join(""):`<div class="empty"><div>🎬</div><b>Aucune vidéo publiée</b></div>`);
+  $("#sa").onclick=()=>{const t=$("#st").value.trim();if(!t)return toast("Ajoutez un titre");SHORTS.push({id:Date.now(),t,d:$("#sd").value.trim(),src:$("#ss").value.trim()});save();toast("Vidéo publiée ✓");sh()};
+  document.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{SHORTS.splice(SHORTS.findIndex(x=>x.id==b.dataset.x),1);save();sh()});return}
+ $("#main").innerHTML=SHORTS.length?`<div id="shorts">${SHORTS.map(s=>`<div class="sh" style="background:linear-gradient(160deg,#7c3aed,#ff4d8d)">${s.src?`<video src="${esc(s.src)}" loop muted playsinline autoplay></video>`:`<div class="em">🎬</div>`}
+ <div class="ac"><button data-l>❤️</button></div><div class="tx"><b>${esc(s.t)}</b><div>${esc(s.d||"")}</div></div></div>`).join("")}</div>`:`<div class="empty"><div>🎬</div><b>Bientôt disponible</b><div class="mut">Les vidéos de LOVO arrivent très vite.</div></div>`;
+ document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>b.textContent="💖");
+}
+function cart(){
+ const ids=Object.keys(S.cart);
+ $("#main").innerHTML=`<h2>Mon panier</h2>`+(ids.length?ids.map(id=>{const a=ARTS.find(x=>x.id==id);return `<div class="card row"><div><b>${esc(a.n)}</b><div class="pr">${fmt(a.p*S.cart[id])}</div></div><div class="q row"><button data-d="${id}">−</button><b>${S.cart[id]}</b><button data-u="${id}">+</button></div></div>`}).join("")+`<div class="card row"><b>Total</b><span class="pr">${fmt(tot())}</span></div><button class="btn" id="chk">Payer maintenant</button>`:`<p class="mut">Votre panier est vide.</p>`)
+ +`<h3 style="margin-top:20px">Mes commandes</h3>`+(S.orders.length?S.orders.map(o=>`<div class="card row"><div><b>#${o.id}</b> • ${o.n} article(s)<div class="mut">${o.d}</div></div><div style="text-align:right"><b>${fmt(o.t)}</b><div class="mut">${o.s}</div></div></div>`).join(""):`<p class="mut">Aucune commande.</p>`);
+ document.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>{S.cart[b.dataset.u]++;save();home()});
+ document.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{if(--S.cart[b.dataset.d]<=0)delete S.cart[b.dataset.d];save();home()});
+ if($("#chk"))$("#chk").onclick=()=>{S.tab="pay";save();home()};
+}
+function pay(){
+ const t=tot();
+ $("#main").innerHTML=`<h2>Moyen de paiement</h2>
+ <div class="pay ${S.pay=="wave"?"on":""}" data-p="wave"><span class="wv">wave</span><div><b>Wave</b><div class="mut">Paiement mobile rapide</div></div></div>
+ <div class="pay ${S.pay=="cash"?"on":""}" data-p="cash"><span style="font-size:1.6rem">💵</span><div><b>À la livraison</b><div class="mut">Payez en recevant</div></div></div>
+ ${S.pay=="wave"?`<div class="card"><div class="mut">Envoyez ${t?"<b>"+fmt(t)+"</b>":"le montant"} par Wave au numéro de la boutique :</div><div class="num">${CFG.wave}</div>
+ <button class="btn sec" id="cp" style="margin:8px 0">Copier le numéro</button>
+ <input id="ref" placeholder="Référence / ID de la transaction Wave"></div>`:""}
+ <div class="card row"><b>Total à payer</b><span class="pr">${fmt(t)}</span></div>
+ <button class="btn" id="ok">Confirmer la commande</button>`;
+ document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{S.pay=b.dataset.p;save();pay()});
+ if($("#cp"))$("#cp").onclick=()=>{try{navigator.clipboard.writeText(CFG.wave)}catch(e){}toast("Numéro copié ✓")};
+ $("#ok").onclick=()=>{if(!t)return toast("Panier vide");
+  if(S.pay=="wave"&&!$("#ref").value.trim())return toast("Entrez la référence Wave");
+  S.orders.unshift({id:Math.floor(Math.random()*9000+1000),n:cnt(),t,d:new Date().toLocaleDateString("fr-FR"),s:S.pay=="wave"?"Paiement à vérifier":"À la livraison"});
+  S.cart={};S.tab="cart";save();toast("Commande enregistrée 🎉");home()};
+}
+function pro(){
+ const O=S.owner,u=S.user||{};
+ $("#main").innerHTML=O?`<div class="hero grad" style="text-align:center"><div style="font-size:3rem">👑</div><h2>Espace propriétaire</h2><div>Vous seul pouvez publier</div></div>
+ <div class="card"><div class="mut">Numéro Wave de réception des paiements</div><div class="num">${CFG.wave}</div></div>
+ <button class="btn sec" id="in">📲 Installer l’application</button>
+ <button class="btn sec" id="lo" style="margin-top:10px">Quitter le mode propriétaire</button>`
+ :`<div class="hero grad" style="text-align:center"><div style="font-size:3rem">🙂</div><h2>${esc(u.nm)}</h2><div>${esc(u.id)}</div></div>
+ <div class="card row"><span>Connexion via</span><b>${u.via=="google"?"Google":u.via=="phone"?"Téléphone":"E-mail"}</b></div>
+ <div class="card row"><span>Commandes</span><b>${S.orders.length}</b></div>
+ <button class="btn sec" id="in">📲 Installer l’application</button>
+ <button class="btn sec" id="lo" style="margin-top:10px">Se déconnecter</button>`;
+ $("#in").onclick=inst;
+ $("#lo").onclick=()=>{S.user=null;S.owner=false;save();auth()};
+}
+if(location.hash=="#proprietaire"){S.owner=true;save()}
+(S.owner||S.user)?home():auth();
+cookies();
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
